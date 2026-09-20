@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>一棟収益物件 日次レポート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 14mm 12mm 16mm 12mm; }
+*{box-sizing:border-box;}
+body{font-family:"Noto Sans JP",sans-serif;color:#1f2937;font-size:9.2pt;line-height:1.6;margin:0;}
+h1,h2,h3{font-family:"Zen Kaku Gothic New",sans-serif;color:#16233d;}
+h1{font-size:15pt;margin:0 0 2mm;}
+h2{font-size:12.5pt;border-bottom:1.6pt solid #16233d;padding-bottom:1.5mm;margin:6mm 0 3mm;}
+h3{font-size:10.5pt;margin:4mm 0 1.5mm;}
+.hero{text-align:center;margin-bottom:4mm;}
+.hero .sub{color:#6b7280;font-size:8.6pt;margin-top:1mm;}
+.hero .date{display:inline-block;margin-top:2mm;font-size:8.4pt;color:#6b7280;border:0.5pt solid #dde3ec;border-radius:6mm;padding:0.8mm 4mm;}
+.summary{display:flex;gap:4mm;margin:4mm 0;}
+.summary .tile{flex:1;border:0.5pt solid #dde3ec;border-radius:2mm;text-align:center;padding:3mm;}
+.summary .tile .num{font-size:14pt;font-weight:900;color:#16233d;}
+.summary .tile .lbl{font-size:8pt;color:#6b7280;}
+
+table.listtable{width:100%;border-collapse:collapse;font-size:7.6pt;margin-bottom:3mm;table-layout:fixed;}
+table.listtable th,table.listtable td{border:0.4pt solid #dde3ec;padding:1.2mm 1.3mm;vertical-align:middle;}
+table.listtable th{background:#eef1f6;color:#374151;font-weight:700;font-size:7.3pt;}
+table.listtable td.num{white-space:nowrap;}
+table.listtable th.num{white-space:nowrap;}
+table.listtable td.markcol{width:5.8%;}
+table.listtable td.photocol{width:11%;}
+table.listtable td.photocol img{width:100%;height:14mm;object-fit:cover;border-radius:0.8mm;display:block;}
+table.listtable td.structcol{white-space:normal;}
+table.listtable td.offcol{width:14%;white-space:nowrap;font-size:6.9pt;}
+.badge{display:inline-block;font-size:6.2pt;font-weight:700;border-radius:3mm;padding:0.25mm 0.8mm;white-space:nowrap;}
+.badge.new{background:#fde8e8;color:#b3261e;}
+.badge.keep{background:#eef1f6;color:#5b6472;}
+.framelabel{white-space:nowrap;font-weight:700;color:#16233d;}
+.ratio-green{color:#1f8a53;font-weight:700;}
+.ratio-yellow{color:#9a6b06;font-weight:700;}
+.ratio-gray{color:#5b6472;font-weight:700;}
+
+.card{border:0.5pt solid #dde3ec;border-radius:2mm;padding:3mm;margin-bottom:3mm;display:flex;gap:3mm;page-break-inside:avoid;}
+.card .photo{width:46mm;height:30.6mm;object-fit:cover;border-radius:1.5mm;flex:0 0 auto;background:#eef1f6;}
+.card .cbody{flex:1;min-width:0;}
+.card .cname{font-size:10pt;font-weight:700;color:#16233d;margin:0 0 1mm;}
+.card .caddr{font-size:7.6pt;color:#6b7280;margin:0 0 1.5mm;}
+.card .cmeta{font-size:7.8pt;color:#374151;margin-bottom:1mm;}
+.card .ccomment{font-size:8pt;line-height:1.75;white-space:pre-line;}
+
+.pagebreak{page-break-before:always;}
+.note{font-size:8pt;color:#6b7280;background:#f7f8fa;border:0.5pt solid #dde3ec;border-radius:2mm;padding:2.5mm 3mm;margin:2mm 0 4mm;}
+.actionblock{border:0.5pt solid #dde3ec;border-radius:2mm;padding:3mm;margin-bottom:3mm;page-break-inside:avoid;}
+.actionblock h3{margin-top:0;}
+.actionblock dl{margin:0;font-size:8.2pt;}
+.actionblock dt{font-weight:700;color:#16233d;margin-top:1.5mm;}
+.actionblock dd{margin:0.5mm 0 0;}
+ol.prio{padding-left:5mm;font-size:8.6pt;}
+ol.prio li{margin-bottom:1.5mm;}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>中国・四国 一棟収益物件 日次レポート（社内用）</h1>
+<div class="sub">健美家 中国・四国エリア 一棟アパート／一棟マンション／一棟ビル　全件確認</div>
+<div class="date">2026年9月20日 作成</div>
+</div>
+
+<div class="summary">
+<div class="tile"><div class="num">5件</div><div class="lbl">枠A 条件合致</div></div>
+<div class="tile"><div class="num">27件</div><div class="lbl">枠B 実勢価格より安い</div></div>
+<div class="tile"><div class="num">3件</div><div class="lbl">惜しい物件</div></div>
+</div>
+
+<div class="note">
+<span class="framelabel">枠A</span>：中国・四国全域（広島・岡山・山口・鳥取・島根・徳島・香川・愛媛・高知）のRC造・SRC造の一棟もの（木造・軽量鉄骨は対象外）／築33年以下／価格4,000万〜8,000万円／表面利回り11%以上<br>
+<span class="framelabel">枠B</span>：価格が実勢価格（実際の取引相場）の75%以下（木造・軽量鉄骨を除く。築年数・利回り・価格は不問）
+</div>
+
+<h2>1. 条件合致物件（枠A）　5件</h2>
+<table class="listtable">
+<colgroup>
+<col style="width:5.2%"><col style="width:9%"><col style="width:14.3%"><col style="width:7%"><col style="width:6%">
+<col style="width:11%"><col style="width:10%"><col style="width:4%"><col style="width:8%"><col style="width:8%">
+<col style="width:9%"><col style="width:7.5%">
+</colgroup>
+<thead><tr>
+<th class="markcol">印</th><th class="photocol">写真</th><th>物件名/所在地</th><th class="num">価格</th><th class="num">利回り</th><th class="num">築年月</th><th>構造</th><th class="num">戸数</th><th class="num">土地面積</th><th class="num">建物面積</th><th class="num">積算概算</th><th class="num">積算比率</th>
+</tr></thead><tbody><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4676376amu.jpg" alt=""></td>
+<td>マリンコート吉見<br><span style="color:#6b7280;font-size:6.8pt;">山口県下関市吉見新町二丁目15-21</span></td>
+<td class="num">5,500万円</td>
+<td class="num">11.06%</td>
+<td class="num">2004年3月／築22年</td>
+<td class="structcol">RC造2階建 総戸数12戸</td>
+<td class="num">12戸</td>
+<td class="num">704.60㎡</td>
+<td class="num">348.38㎡</td>
+<td class="num">約5,200万円</td>
+<td class="num ratio-green">95%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4652544ike.jpg" alt=""></td>
+<td>ホワイトハイツ<br><span style="color:#6b7280;font-size:6.8pt;">山口県宇部市大字東須恵918-59</span></td>
+<td class="num">6,860万円</td>
+<td class="num">11.06%</td>
+<td class="num">1995年1月／築31年</td>
+<td class="structcol">RC造3階建 総戸数12戸</td>
+<td class="num">12戸</td>
+<td class="num">1,213.91㎡</td>
+<td class="num">711.90㎡</td>
+<td class="num">約7,688万円</td>
+<td class="num ratio-green">112%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4642818sc4.jpg" alt=""></td>
+<td>山口市 平成8年築 RC造一棟マンション<br><span style="color:#6b7280;font-size:6.8pt;">山口県山口市小郡本町2丁目874-1</span></td>
+<td class="num">5,980万円</td>
+<td class="num">11.53%</td>
+<td class="num">1996年2月／築30年</td>
+<td class="structcol">RC造5階建 総戸数9戸 （うち住戸以外 1戸）</td>
+<td class="num">9戸</td>
+<td class="num">355.21㎡</td>
+<td class="num">565.55㎡</td>
+<td class="num">約6,276万円</td>
+<td class="num ratio-green">105%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4604591ppt.jpg" alt=""></td>
+<td>インペリアルミトA・B棟<br><span style="color:#6b7280;font-size:6.8pt;">山口県長門市東深川2239-3</span></td>
+<td class="num">4,300万円</td>
+<td class="num">12.37%</td>
+<td class="num">1993年3月／築33年</td>
+<td class="structcol">RC造2階建 総戸数8戸</td>
+<td class="num">8戸</td>
+<td class="num">1,063.75㎡</td>
+<td class="num">273.02㎡</td>
+<td class="num">約3,860万円</td>
+<td class="num ratio-green">90%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4627083mj8.jpg" alt=""></td>
+<td>シャトル昭和町<br><span style="color:#6b7280;font-size:6.8pt;">徳島県徳島市昭和町七丁目10-2</span></td>
+<td class="num">7,000万円</td>
+<td class="num">12.06%</td>
+<td class="num">1994年3月／築32年</td>
+<td class="structcol">RC造4階建 総戸数24戸</td>
+<td class="num">24戸</td>
+<td class="num">383.60㎡</td>
+<td class="num">569.64㎡</td>
+<td class="num">約6,724万円</td>
+<td class="num ratio-green">96%</td>
+</tr></tbody></table>
+<div class="card">
+<img class="photo" src="photos/4676376amu.jpg" alt="">
+<div class="cbody">
+<div class="cname">マリンコート吉見 <span class="badge keep">継続</span></div>
+<div class="caddr">山口県下関市吉見新町二丁目15-21／JR山陰本線 吉見駅 歩10分</div>
+<div class="cmeta">5,500万円／表面利回り 11.06%／RC造2階建 総戸数12戸／築年月 2004年3月／築22年／土地 704.60㎡／建物 348.38㎡</div>
+<div class="ccomment">一棟マンション・RC造2階建 総戸数12戸の物件です。表面利回り11.06%、築22年で、価格は5,500万円です。<br>積算評価は価格の約95%で、積算面からの評価も含めてご検討いただける水準です。<br>現況は賃貸中です。<br>接道は北東側 幅員約6m / 間口約26m 南西側 幅員約4m / 26m。詳細な再建築の可否は要確認です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4652544ike.jpg" alt="">
+<div class="cbody">
+<div class="cname">ホワイトハイツ <span class="badge keep">継続</span></div>
+<div class="caddr">山口県宇部市大字東須恵918-59／JR小野田線 小野田港駅 歩22分</div>
+<div class="cmeta">6,860万円／表面利回り 11.06%／RC造3階建 総戸数12戸／築年月 1995年1月／築31年／土地 1,213.91㎡／建物 711.90㎡</div>
+<div class="ccomment">一棟マンション・RC造3階建 総戸数12戸の物件です。表面利回り11.06%、築31年で、価格は6,860万円です。<br>積算評価は価格の約112%で、積算面からの評価も含めてご検討いただける水準です。<br>現況は賃貸中です。<br>接道は南側約幅員6m。詳細な再建築の可否は要確認です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4642818sc4.jpg" alt="">
+<div class="cbody">
+<div class="cname">山口市 平成8年築 RC造一棟マンション <span class="badge keep">継続</span></div>
+<div class="caddr">山口県山口市小郡本町2丁目874-1／JR山陽新幹線 新山口駅 歩18分</div>
+<div class="cmeta">5,980万円／表面利回り 11.53%／RC造5階建 総戸数9戸 （うち住戸以外 1戸）／築年月 1996年2月／築30年／土地 355.21㎡／建物 565.55㎡</div>
+<div class="ccomment">一棟マンション・RC造5階建 総戸数9戸 （うち住戸以外 1戸）の物件です。表面利回り11.53%、築30年で、価格は5,980万円です。<br>積算評価は価格の約105%で、積算面からの評価も含めてご検討いただける水準です。<br>現況は賃貸中です。<br>接道は西側 公道 幅員約12.5m / 東側 42条2項道路 幅員確認中。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4604591ppt.jpg" alt="">
+<div class="cbody">
+<div class="cname">インペリアルミトA・B棟 <span class="badge keep">継続</span></div>
+<div class="caddr">山口県長門市東深川2239-3／JR山陰本線 長門市駅 歩16分</div>
+<div class="cmeta">4,300万円／表面利回り 12.37%／RC造2階建 総戸数8戸／築年月 1993年3月／築33年／土地 1,063.75㎡／建物 273.02㎡</div>
+<div class="ccomment">一棟アパート・RC造2階建 総戸数8戸の物件です。表面利回り12.37%、築33年で、価格は4,300万円です。<br>積算評価は価格の約90%で、積算面からの評価も含めてご検討いただける水準です。<br>現況は賃貸中です。<br>価格は複数の情報源で差異があったため、価格は要確認です。<br>接道は三方 北4.7m公道 東1.7m 接道接面30.0m 角地。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4627083mj8.jpg" alt="">
+<div class="cbody">
+<div class="cname">シャトル昭和町 <span class="badge keep">継続</span></div>
+<div class="caddr">徳島県徳島市昭和町七丁目10-2／JR牟岐線 阿波富田駅 歩23分</div>
+<div class="cmeta">7,000万円／表面利回り 12.06%／RC造4階建 総戸数24戸／築年月 1994年3月／築32年／土地 383.60㎡／建物 569.64㎡</div>
+<div class="ccomment">一棟マンション・RC造4階建 総戸数24戸の物件です。表面利回り12.06%、築32年で、価格は7,000万円です。<br>積算評価は価格の約96%で、積算面からの評価も含めてご検討いただける水準です。<br>現況は賃貸中です。<br>接道は東南側/間口約13m/幅員約4.5m。詳細な再建築の可否は要確認です。</div>
+</div>
+</div>
+<h2>2. 実勢価格より安い物件（枠B）　27件</h2>
+<table class="listtable">
+<colgroup>
+<col style="width:5.2%"><col style="width:9%"><col style="width:14.3%"><col style="width:7%"><col style="width:6%">
+<col style="width:11%"><col style="width:10%"><col style="width:4%"><col style="width:8%"><col style="width:8%">
+<col style="width:9%"><col style="width:7.5%">
+</colgroup>
+<thead><tr>
+<th class="markcol">印</th><th class="photocol">写真</th><th>物件名/所在地</th><th class="num">価格</th><th class="num">利回り</th><th class="num">築年月</th><th>構造</th><th class="num">戸数</th><th class="num">土地面積</th><th class="num">建物面積</th><th class="num">実勢価格</th><th class="num">実勢価格比</th>
+</tr></thead><tbody><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4576015zix.jpg" alt=""></td>
+<td>岡山県倉敷市 一棟RCマンション 4棟一括<br><span style="color:#6b7280;font-size:6.8pt;">岡山県倉敷市児島唐琴2丁目3-23</span></td>
+<td class="num">577万円</td>
+<td class="num">51.5%</td>
+<td class="num">1971年7月／築55年</td>
+<td class="structcol">RC造2階建 総戸数14戸</td>
+<td class="num">14戸</td>
+<td class="num">1,308.00㎡</td>
+<td class="num">679.04㎡</td>
+<td class="num">約3,459万円</td>
+<td class="num ratio-green">約16.7%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4709468osg.jpg" alt=""></td>
+<td>鳥取県米子市 一棟コンクリートブロ<br><span style="color:#6b7280;font-size:6.8pt;">鳥取県米子市祇園町2丁目169-1</span></td>
+<td class="num">400万円</td>
+<td class="num">49.8%</td>
+<td class="num">1970年7月／築56年</td>
+<td class="structcol">ブロック2階建 総戸数6戸</td>
+<td class="num">6戸</td>
+<td class="num">302.05㎡</td>
+<td class="num">200.78㎡</td>
+<td class="num">約1,782万円</td>
+<td class="num ratio-green">約22.4%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4657164aod.jpg" alt=""></td>
+<td>高知県須崎市 一棟アパート<br><span style="color:#6b7280;font-size:6.8pt;">高知県須崎市下分甲</span></td>
+<td class="num">454万円</td>
+<td class="num">142.7%</td>
+<td class="num">1974年7月／築52年</td>
+<td class="structcol">ブロック2階建 総戸数22戸</td>
+<td class="num">22戸</td>
+<td class="num">583.24㎡</td>
+<td class="num">608.80㎡</td>
+<td class="num">約1,471万円</td>
+<td class="num ratio-green">約30.9%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4554656stf.jpg" alt=""></td>
+<td>徳島サンハイツ<br><span style="color:#6b7280;font-size:6.8pt;">徳島県小松島市中郷町字西野1-21</span></td>
+<td class="num">27,000万円</td>
+<td class="num">46.68%</td>
+<td class="num">1974年11月／築51年</td>
+<td class="structcol">RC造12階建 総戸数300戸</td>
+<td class="num">300戸</td>
+<td class="num">20,395.09㎡</td>
+<td class="num">16,607.02㎡</td>
+<td class="num">約86,339万円</td>
+<td class="num ratio-green">約31.3%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4659913kwa.jpg" alt=""></td>
+<td>岡山県倉敷市 一棟売りアパート<br><span style="color:#6b7280;font-size:6.8pt;">岡山県倉敷市玉島長尾</span></td>
+<td class="num">1,000万円</td>
+<td class="num">30.96%</td>
+<td class="num">1974年1月／築52年</td>
+<td class="structcol">S造2階建 総戸数8戸</td>
+<td class="num">8戸</td>
+<td class="num">452.72㎡</td>
+<td class="num">274.34㎡</td>
+<td class="num">約2,958万円</td>
+<td class="num ratio-green">約33.8%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4576162iuc.jpg" alt=""></td>
+<td>デュウオコート西平塚<br><span style="color:#6b7280;font-size:6.8pt;">広島県広島市中区西平塚町8番18号</span></td>
+<td class="num">11,000万円</td>
+<td class="num">8.1%</td>
+<td class="num">1980年4月／築46年</td>
+<td class="structcol">RC造5階建 総戸数17戸 （うち住戸以外 1戸）</td>
+<td class="num">17戸</td>
+<td class="num">130.11㎡</td>
+<td class="num">456.32㎡</td>
+<td class="num">約25,877万円</td>
+<td class="num ratio-green">約42.5%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4704649llx.jpg" alt=""></td>
+<td>愛媛県松山市 一棟売りマンション<br><span style="color:#6b7280;font-size:6.8pt;">愛媛県松山市樽味</span></td>
+<td class="num">5,500万円</td>
+<td class="num">26.89%</td>
+<td class="num">1985年3月／築41年</td>
+<td class="structcol">RC造4階建 総戸数32戸 （うち住戸以外 8戸）</td>
+<td class="num">32戸</td>
+<td class="num">639.36㎡</td>
+<td class="num">897.44㎡</td>
+<td class="num">約12,858万円</td>
+<td class="num ratio-green">約42.8%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4616094e3t.jpg" alt=""></td>
+<td>広島県三次市 一棟RCマンション<br><span style="color:#6b7280;font-size:6.8pt;">広島県三次市南畑敷町</span></td>
+<td class="num">3,300万円</td>
+<td class="num">36.0%</td>
+<td class="num">1975年8月／築51年</td>
+<td class="structcol">RC造4階建 総戸数18戸</td>
+<td class="num">18戸</td>
+<td class="num">2,106.00㎡</td>
+<td class="num">1,206.35㎡</td>
+<td class="num">約6,763万円</td>
+<td class="num ratio-green">約48.8%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4711812e5y.jpg" alt=""></td>
+<td>山口県宇部市 一棟S造アパート<br><span style="color:#6b7280;font-size:6.8pt;">山口県宇部市西梶返2丁目20</span></td>
+<td class="num">1,500万円</td>
+<td class="num">21.6%</td>
+<td class="num">1971年5月／築55年</td>
+<td class="structcol">S造2階建 総戸数10戸</td>
+<td class="num">10戸</td>
+<td class="num">838.87㎡</td>
+<td class="num">486.00㎡</td>
+<td class="num">約3,048万円</td>
+<td class="num ratio-green">約49.2%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/47085937tn.jpg" alt=""></td>
+<td>山口市 1棟AP<br><span style="color:#6b7280;font-size:6.8pt;">山口県山口市平井</span></td>
+<td class="num">1,860万円</td>
+<td class="num">15.93%</td>
+<td class="num">1988年5月／築38年</td>
+<td class="structcol">RC造2階建 総戸数10戸</td>
+<td class="num">10戸</td>
+<td class="num">649.71㎡</td>
+<td class="num">213.74㎡</td>
+<td class="num">約3,516万円</td>
+<td class="num ratio-green">約52.9%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4622235u8z.jpg" alt=""></td>
+<td>藤ライフ<br><span style="color:#6b7280;font-size:6.8pt;">岡山県倉敷市西富井1270-2</span></td>
+<td class="num">4,280万円</td>
+<td class="num">10.1%</td>
+<td class="num">1985年12月／築40年</td>
+<td class="structcol">RC造2階建 総戸数6戸</td>
+<td class="num">6戸</td>
+<td class="num">801.99㎡</td>
+<td class="num">247.86㎡</td>
+<td class="num">約7,904万円</td>
+<td class="num ratio-green">約54.1%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/_nophoto.jpg" alt=""></td>
+<td>東和マンション<br><span style="color:#6b7280;font-size:6.8pt;">山口県周南市花陽</span></td>
+<td class="num">800万円</td>
+<td class="num">18.6%</td>
+<td class="num">1979年1月／築47年</td>
+<td class="structcol">RC造2階建 総戸数4戸</td>
+<td class="num">4戸</td>
+<td class="num">198.30㎡</td>
+<td class="num">158.00㎡</td>
+<td class="num">約1,404万円</td>
+<td class="num ratio-green">約57.0%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4696200wm7.jpg" alt=""></td>
+<td>広島県廿日市 一棟アパート<br><span style="color:#6b7280;font-size:6.8pt;">広島県廿日市市宮内1丁目3番34号</span></td>
+<td class="num">14,900万円</td>
+<td class="num">6.33%</td>
+<td class="num">1995年2月／築31年</td>
+<td class="structcol">S造2階建 総戸数16戸</td>
+<td class="num">16戸</td>
+<td class="num">1,309.03㎡</td>
+<td class="num">608.56㎡</td>
+<td class="num">約25,744万円</td>
+<td class="num ratio-green">約57.9%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4670756ees.jpg" alt=""></td>
+<td>ウエストコーポ＋貸家<br><span style="color:#6b7280;font-size:6.8pt;">山口県岩国市錦見7丁目2-25</span></td>
+<td class="num">2,550万円</td>
+<td class="num">11.2%</td>
+<td class="num">1988年2月／築38年</td>
+<td class="structcol">S造2階建 総戸数5戸</td>
+<td class="num">5戸</td>
+<td class="num">515.80㎡</td>
+<td class="num">210.52㎡</td>
+<td class="num">約4,109万円</td>
+<td class="num ratio-green">約62.1%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/46267889qb.jpg" alt=""></td>
+<td>東富田コーポ<br><span style="color:#6b7280;font-size:6.8pt;">徳島県徳島市かちどき橋3丁目56</span></td>
+<td class="num">6,500万円</td>
+<td class="num">11.07%</td>
+<td class="num">1981年7月／築45年</td>
+<td class="structcol">RC造3階建 総戸数15戸</td>
+<td class="num">15戸</td>
+<td class="num">816.85㎡</td>
+<td class="num">816.00㎡</td>
+<td class="num">約10,347万円</td>
+<td class="num ratio-green">約62.8%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4631819mvc.jpg" alt=""></td>
+<td>メゾン・ドゥ・コリーヌＡ、Ｂ<br><span style="color:#6b7280;font-size:6.8pt;">岡山県岡山市中区海吉2226-1</span></td>
+<td class="num">6,900万円</td>
+<td class="num">13.76%</td>
+<td class="num">1996年9月／築30年</td>
+<td class="structcol">S造2階建 総戸数16戸</td>
+<td class="num">16戸</td>
+<td class="num">1,790.02㎡</td>
+<td class="num">746.96㎡</td>
+<td class="num">約10,919万円</td>
+<td class="num ratio-green">約63.2%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/455615537h.jpg" alt=""></td>
+<td>ダン・デ・リオン1、2、3<br><span style="color:#6b7280;font-size:6.8pt;">岡山県岡山市北区万成西町9-5-2</span></td>
+<td class="num">10,000万円</td>
+<td class="num">10.59%</td>
+<td class="num">1998年3月／築28年</td>
+<td class="structcol">RC造2階建 総戸数10戸</td>
+<td class="num">10戸</td>
+<td class="num">1,274.98㎡</td>
+<td class="num">240.84㎡</td>
+<td class="num">約15,725万円</td>
+<td class="num ratio-green">約63.6%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/47029655xl.jpg" alt=""></td>
+<td>岡山県岡山市中区 一棟売りマンション<br><span style="color:#6b7280;font-size:6.8pt;">岡山県岡山市中区東山</span></td>
+<td class="num">5,500万円</td>
+<td class="num">11.8%</td>
+<td class="num">1991年1月／築35年</td>
+<td class="structcol">RC造3階建 総戸数12戸</td>
+<td class="num">12戸</td>
+<td class="num">617.93㎡</td>
+<td class="num">514.41㎡</td>
+<td class="num">約8,445万円</td>
+<td class="num ratio-green">約65.1%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/46999213aq.jpg" alt=""></td>
+<td>愛媛県今治市 一棟アパート<br><span style="color:#6b7280;font-size:6.8pt;">愛媛県今治市東村</span></td>
+<td class="num">1,300万円</td>
+<td class="num">20.95%</td>
+<td class="num">1985年9月／築41年</td>
+<td class="structcol">S造2階建 総戸数6戸</td>
+<td class="num">6戸</td>
+<td class="num">462.80㎡</td>
+<td class="num">232.52㎡</td>
+<td class="num">約1,990万円</td>
+<td class="num ratio-green">約65.3%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4664825efa.jpg" alt=""></td>
+<td>愛媛県松山市 一棟売りアパート<br><span style="color:#6b7280;font-size:6.8pt;">愛媛県松山市高砂町1丁目</span></td>
+<td class="num">2,300万円</td>
+<td class="num">14.11%</td>
+<td class="num">1979年4月／築47年</td>
+<td class="structcol">SRC造3階建 総戸数15戸</td>
+<td class="num">15戸</td>
+<td class="num">186.04㎡</td>
+<td class="num">395.82㎡</td>
+<td class="num">約3,514万円</td>
+<td class="num ratio-green">約65.5%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/_nophoto.jpg" alt=""></td>
+<td>レトロプラス宮脇町<br><span style="color:#6b7280;font-size:6.8pt;">香川県高松市宮脇町二丁目</span></td>
+<td class="num">2,100万円</td>
+<td class="num">20.02%</td>
+<td class="num">1972年12月／築53年</td>
+<td class="structcol">ブロック造4階建 総戸数7戸</td>
+<td class="num">7戸</td>
+<td class="num">247.83㎡</td>
+<td class="num">294.48㎡</td>
+<td class="num">約3,057万円</td>
+<td class="num ratio-green">約68.7%</td>
+</tr><tr>
+<td class="markcol"><span class="badge new">NEW</span></td>
+<td class="photocol"><img src="photos/4722132hlo.jpg" alt=""></td>
+<td>高畑ビル<br><span style="color:#6b7280;font-size:6.8pt;">広島県広島市南区丹那町</span></td>
+<td class="num">2,600万円</td>
+<td class="num">20.35%</td>
+<td class="num">1973年4月／築53年</td>
+<td class="structcol">S造4階建 総戸数11戸</td>
+<td class="num">11戸</td>
+<td class="num">201.65㎡</td>
+<td class="num">381.67㎡</td>
+<td class="num">約3,742万円</td>
+<td class="num ratio-green">約69.5%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/_nophoto.jpg" alt=""></td>
+<td>徳島県徳島市 一棟売りマンション<br><span style="color:#6b7280;font-size:6.8pt;">徳島県徳島市中島田4丁目</span></td>
+<td class="num">2,600万円</td>
+<td class="num">22.27%</td>
+<td class="num">1975年11月／築50年</td>
+<td class="structcol">RC造3階建 総戸数12戸</td>
+<td class="num">12戸</td>
+<td class="num">640.30㎡</td>
+<td class="num">542.16㎡</td>
+<td class="num">約3,735万円</td>
+<td class="num ratio-green">約69.6%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4693196lr9.jpg" alt=""></td>
+<td>シャトー津島<br><span style="color:#6b7280;font-size:6.8pt;">岡山県岡山市北区津島西坂二丁目3-51</span></td>
+<td class="num">7,500万円</td>
+<td class="num">12.29%</td>
+<td class="num">1987年2月／築39年</td>
+<td class="structcol">S造2階建 総戸数18戸</td>
+<td class="num">18戸</td>
+<td class="num">547.01㎡</td>
+<td class="num">344.16㎡</td>
+<td class="num">約10,576万円</td>
+<td class="num ratio-green">約70.9%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4621417u6r.jpg" alt=""></td>
+<td>愛媛県松山市 一棟<br><span style="color:#6b7280;font-size:6.8pt;">愛媛県松山市保免中2丁目5</span></td>
+<td class="num">4,600万円</td>
+<td class="num">13.35%</td>
+<td class="num">1966年1月／築60年</td>
+<td class="structcol">RC造3階建 総戸数10戸 （うち住戸以外 8戸）</td>
+<td class="num">10戸</td>
+<td class="num">621.43㎡</td>
+<td class="num">567.06㎡</td>
+<td class="num">約6,463万円</td>
+<td class="num ratio-green">約71.2%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/45708098y6.jpg" alt=""></td>
+<td>マツダビル<br><span style="color:#6b7280;font-size:6.8pt;">広島県広島市南区向洋本町19-31</span></td>
+<td class="num">5,000万円</td>
+<td class="num">15.14%</td>
+<td class="num">1972年11月／築53年</td>
+<td class="structcol">RC造4階建 総戸数16戸</td>
+<td class="num">16戸</td>
+<td class="num">381.28㎡</td>
+<td class="num">604.60㎡</td>
+<td class="num">約6,736万円</td>
+<td class="num ratio-green">約74.2%</td>
+</tr><tr>
+<td class="markcol"><span class="badge keep">継続</span></td>
+<td class="photocol"><img src="photos/4594798h6f.jpg" alt=""></td>
+<td>【グレース古江】 広島市西区古江東町 一棟マンション<br><span style="color:#6b7280;font-size:6.8pt;">広島県広島市西区古江東町</span></td>
+<td class="num">10,300万円</td>
+<td class="num">6.61%</td>
+<td class="num">1988年9月／築38年</td>
+<td class="structcol">RC造4階建 総戸数8戸</td>
+<td class="num">8戸</td>
+<td class="num">459.40㎡</td>
+<td class="num">459.10㎡</td>
+<td class="num">約13,782万円</td>
+<td class="num ratio-green">約74.7%</td>
+</tr></tbody></table>
+<div class="card">
+<img class="photo" src="photos/4576015zix.jpg" alt="">
+<div class="cbody">
+<div class="cname">岡山県倉敷市 一棟RCマンション 4棟一括 <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県倉敷市児島唐琴2丁目3-23／JR瀬戸大橋線 児島駅 バス17分 歩5分</div>
+<div class="cmeta">577万円／表面利回り 51.5%／RC造2階建 総戸数14戸／築年月 1971年7月／築55年／土地 1,308.00㎡／建物 679.04㎡</div>
+<div class="ccomment">一棟マンション・RC造2階建 総戸数14戸の物件です。価格は577万円で、表面利回り51.5%です。<br>実勢価格（実際の取引相場）の約16.7%の価格となっています。<br>現況は賃貸中です。<br>接道は三方 北2.5m公道 接道接面22.0m。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「倉敷」（岡山県　倉敷市児島唐琴３丁目１０４８番１０、単価23,800円/㎡、対象地から約0.33km）の公示価格を土地面積1,308.00㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,459万円。価格577万円は実勢価格の約16.7%です。<br>外観写真では、壁面の汚れや雨だれ、開口部まわりの経年劣化が見られ、築年数相応の傷みが確認できます。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4709468osg.jpg" alt="">
+<div class="cbody">
+<div class="cname">鳥取県米子市 一棟コンクリートブロ <span class="badge keep">継続</span></div>
+<div class="caddr">鳥取県米子市祇園町2丁目169-1／JR山陰本線 米子駅 歩18分</div>
+<div class="cmeta">400万円／表面利回り 49.8%／ブロック2階建 総戸数6戸／築年月 1970年7月／築56年／土地 302.05㎡／建物 200.78㎡</div>
+<div class="ccomment">一棟アパート・ブロック2階建 総戸数6戸の物件です。価格は400万円で、表面利回り49.8%です。<br>実勢価格（実際の取引相場）の約22.4%の価格となっています。<br>現況は賃貸中です。<br>価格は複数の情報源で差異があったため、価格は要確認です。<br>接道は一方 南3.0m私道 接道接面5.0m。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「米子」（鳥取県　米子市西町１１７番５、単価53,100円/㎡、対象地から約1.33km）の公示価格を土地面積302.05㎡に乗じ、÷0.9で実勢価格へ割り戻すと約1,782万円。価格400万円は実勢価格の約22.4%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4657164aod.jpg" alt="">
+<div class="cbody">
+<div class="cname">高知県須崎市 一棟アパート <span class="badge keep">継続</span></div>
+<div class="caddr">高知県須崎市下分甲／JR土讃線 土佐新荘駅 歩9分</div>
+<div class="cmeta">454万円／表面利回り 142.7%／ブロック2階建 総戸数22戸／築年月 1974年7月／築52年／土地 583.24㎡／建物 608.80㎡</div>
+<div class="ccomment">一棟アパート・ブロック2階建 総戸数22戸の物件です。価格は454万円で、表面利回り142.7%です。<br>実勢価格（実際の取引相場）の約30.9%の価格となっています。<br>現況は賃貸中です。<br>接道は二方 南5.5m公道 接道接面1.3m。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「須崎」（高知県　須崎市下分字三瀧ノ前甲５１９番１、単価22,700円/㎡、対象地から約1.281km）の公示価格を土地面積583.24㎡に乗じ、÷0.9で実勢価格へ割り戻すと約1,471万円。価格454万円は実勢価格の約30.9%です。<br>外観写真では、外壁のひび割れやサビ、色あせが見られ、劣化がやや進んでいる印象です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4554656stf.jpg" alt="">
+<div class="cbody">
+<div class="cname">徳島サンハイツ <span class="badge keep">継続</span></div>
+<div class="caddr">徳島県小松島市中郷町字西野1-21／JR牟岐線 中田駅 歩3分</div>
+<div class="cmeta">27,000万円／表面利回り 46.68%／RC造12階建 総戸数300戸／築年月 1974年11月／築51年／土地 20,395.09㎡／建物 16,607.02㎡</div>
+<div class="ccomment">一棟マンション・RC造12階建 総戸数300戸の物件です。価格は27,000万円で、表面利回り46.68%です。<br>実勢価格（実際の取引相場）の約31.3%の価格となっています。<br>現況は賃貸中です。<br>接道は西側・南側：市道。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「小松島」（徳島県　小松島市小松島町字南開６２番１３、単価38,100円/㎡、対象地から約0.194km）の公示価格を土地面積20,395.09㎡に乗じ、÷0.9で実勢価格へ割り戻すと約86,339万円。価格27,000万円は実勢価格の約31.3%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4659913kwa.jpg" alt="">
+<div class="cbody">
+<div class="cname">岡山県倉敷市 一棟売りアパート <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県倉敷市玉島長尾／JR山陽新幹線 新倉敷駅 歩15分</div>
+<div class="cmeta">1,000万円／表面利回り 30.96%／S造2階建 総戸数8戸／築年月 1974年1月／築52年／土地 452.72㎡／建物 274.34㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数8戸の物件です。価格は1,000万円で、表面利回り30.96%です。<br>実勢価格（実際の取引相場）の約33.8%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「倉敷」（岡山県　倉敷市玉島長尾字御家堂２９７４番１、単価58,800円/㎡、対象地から約0.651km）の公示価格を土地面積452.72㎡に乗じ、÷0.9で実勢価格へ割り戻すと約2,958万円。価格1,000万円は実勢価格の約33.8%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4576162iuc.jpg" alt="">
+<div class="cbody">
+<div class="cname">デュウオコート西平塚 <span class="badge keep">継続</span></div>
+<div class="caddr">広島県広島市中区西平塚町8番18号／広島電鉄1系統 銀山町駅 歩9分</div>
+<div class="cmeta">11,000万円／表面利回り 8.1%／RC造5階建 総戸数17戸 （うち住戸以外 1戸）／築年月 1980年4月／築46年／土地 130.11㎡／建物 456.32㎡</div>
+<div class="ccomment">一棟マンション・RC造5階建 総戸数17戸 （うち住戸以外 1戸）の物件です。価格は11,000万円で、表面利回り8.1%です。<br>実勢価格（実際の取引相場）の約42.5%の価格となっています。<br>現況は賃貸中（満室）です。<br>接道は西側公道：約6m/間口：約8m。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「広島中」（広島県　広島市中区中町９番２、単価1,790,000円/㎡、対象地から約0.542km）の公示価格を土地面積130.11㎡に乗じ、÷0.9で実勢価格へ割り戻すと約25,877万円。価格11,000万円は実勢価格の約42.5%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4704649llx.jpg" alt="">
+<div class="cbody">
+<div class="cname">愛媛県松山市 一棟売りマンション <span class="badge keep">継続</span></div>
+<div class="caddr">愛媛県松山市樽味／伊予鉄道市駅線 道後公園駅 歩15分</div>
+<div class="cmeta">5,500万円／表面利回り 26.89%／RC造4階建 総戸数32戸 （うち住戸以外 8戸）／築年月 1985年3月／築41年／土地 639.36㎡／建物 897.44㎡</div>
+<div class="ccomment">一棟マンション・RC造4階建 総戸数32戸 （うち住戸以外 8戸）の物件です。価格は5,500万円で、表面利回り26.89%です。<br>実勢価格（実際の取引相場）の約42.8%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「松山」（愛媛県　松山市上市１丁目２４番９、単価181,000円/㎡、対象地から約0.416km）の公示価格を土地面積639.36㎡に乗じ、÷0.9で実勢価格へ割り戻すと約12,858万円。価格5,500万円は実勢価格の約42.8%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4616094e3t.jpg" alt="">
+<div class="cbody">
+<div class="cname">広島県三次市 一棟RCマンション <span class="badge keep">継続</span></div>
+<div class="caddr">広島県三次市南畑敷町／JR福塩線 三次駅 歩18分</div>
+<div class="cmeta">3,300万円／表面利回り 36.0%／RC造4階建 総戸数18戸／築年月 1975年8月／築51年／土地 2,106.00㎡／建物 1,206.35㎡</div>
+<div class="ccomment">一棟マンション・RC造4階建 総戸数18戸の物件です。価格は3,300万円で、表面利回り36.0%です。<br>実勢価格（実際の取引相場）の約48.8%の価格となっています。<br>現況は空室です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「三次」（広島県　三次市南畑敷町２９４番３０、単価28,900円/㎡、対象地から約0.907km）の公示価格を土地面積2,106.00㎡に乗じ、÷0.9で実勢価格へ割り戻すと約6,763万円。価格3,300万円は実勢価格の約48.8%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4711812e5y.jpg" alt="">
+<div class="cbody">
+<div class="cname">山口県宇部市 一棟S造アパート <span class="badge keep">継続</span></div>
+<div class="caddr">山口県宇部市西梶返2丁目20／JR宇部線 東新川駅 歩11分</div>
+<div class="cmeta">1,500万円／表面利回り 21.6%／S造2階建 総戸数10戸／築年月 1971年5月／築55年／土地 838.87㎡／建物 486.00㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数10戸の物件です。価格は1,500万円で、表面利回り21.6%です。<br>実勢価格（実際の取引相場）の約49.2%の価格となっています。<br>現況は空室です。<br>接道は一方 北東。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「宇部」（山口県　宇部市明治町２丁目４番３、単価32,700円/㎡、対象地から約1.513km）の公示価格を土地面積838.87㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,048万円。価格1,500万円は実勢価格の約49.2%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/47085937tn.jpg" alt="">
+<div class="cbody">
+<div class="cname">山口市 1棟AP <span class="badge keep">継続</span></div>
+<div class="caddr">山口県山口市平井／JR山口線 湯田温泉駅 歩15分</div>
+<div class="cmeta">1,860万円／表面利回り 15.93%／RC造2階建 総戸数10戸／築年月 1988年5月／築38年／土地 649.71㎡／建物 213.74㎡</div>
+<div class="ccomment">一棟アパート・RC造2階建 総戸数10戸の物件です。価格は1,860万円で、表面利回り15.93%です。<br>実勢価格（実際の取引相場）の約52.9%の価格となっています。<br>現況は賃貸中です。<br>接道は西側 幅員確認中。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「山口」（山口県　山口市矢原町１４６番外、単価48,700円/㎡、対象地から約1.097km）の公示価格を土地面積649.71㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,516万円。価格1,860万円は実勢価格の約52.9%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4622235u8z.jpg" alt="">
+<div class="cbody">
+<div class="cname">藤ライフ <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県倉敷市西富井1270-2／水島臨海鉄道 福井駅 歩11分</div>
+<div class="cmeta">4,280万円／表面利回り 10.1%／RC造2階建 総戸数6戸／築年月 1985年12月／築40年／土地 801.99㎡／建物 247.86㎡</div>
+<div class="ccomment">一棟マンション・RC造2階建 総戸数6戸の物件です。価格は4,280万円で、表面利回り10.1%です。<br>実勢価格（実際の取引相場）の約54.1%の価格となっています。<br>現況は賃貸中（満室）です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「倉敷」（岡山県　倉敷市新田字東古開２４０５番４８、単価88,700円/㎡、対象地から約1.491km）の公示価格を土地面積801.99㎡に乗じ、÷0.9で実勢価格へ割り戻すと約7,904万円。価格4,280万円は実勢価格の約54.1%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/_nophoto.jpg" alt="">
+<div class="cbody">
+<div class="cname">東和マンション <span class="badge keep">継続</span></div>
+<div class="caddr">山口県周南市花陽／JR山陽本線 櫛ケ浜駅 歩48分</div>
+<div class="cmeta">800万円／表面利回り 18.6%／RC造2階建 総戸数4戸／築年月 1979年1月／築47年／土地 198.30㎡／建物 158.00㎡</div>
+<div class="ccomment">一棟マンション・RC造2階建 総戸数4戸の物件です。価格は800万円で、表面利回り18.6%です。<br>実勢価格（実際の取引相場）の約57.0%の価格となっています。<br>現況は賃貸中です。<br>接道は再建築不可。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「周南」（山口県　周南市楠木１丁目８６番、単価63,700円/㎡、対象地から約1.018km）の公示価格を土地面積198.30㎡に乗じ、÷0.9で実勢価格へ割り戻すと約1,404万円。価格800万円は実勢価格の約57.0%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4696200wm7.jpg" alt="">
+<div class="cbody">
+<div class="cname">広島県廿日市 一棟アパート <span class="badge keep">継続</span></div>
+<div class="caddr">広島県廿日市市宮内1丁目3番34号／JR山陽本線 宮内串戸駅 歩11分</div>
+<div class="cmeta">14,900万円／表面利回り 6.33%／S造2階建 総戸数16戸／築年月 1995年2月／築31年／土地 1,309.03㎡／建物 608.56㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数16戸の物件です。価格は14,900万円で、表面利回り6.33%です。<br>実勢価格（実際の取引相場）の約57.9%の価格となっています。<br>現況は賃貸中です。<br>接道は西側 位置指定道路約4.1m 角地。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「廿日市」（広島県　廿日市市串戸４丁目２５４番１０、単価177,000円/㎡、対象地から約0.498km）の公示価格を土地面積1,309.03㎡に乗じ、÷0.9で実勢価格へ割り戻すと約25,744万円。価格14,900万円は実勢価格の約57.9%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4670756ees.jpg" alt="">
+<div class="cbody">
+<div class="cname">ウエストコーポ＋貸家 <span class="badge keep">継続</span></div>
+<div class="caddr">山口県岩国市錦見7丁目2-25／JR岩徳線 西岩国駅 歩15分</div>
+<div class="cmeta">2,550万円／表面利回り 11.2%／S造2階建 総戸数5戸／築年月 1988年2月／築38年／土地 515.80㎡／建物 210.52㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数5戸の物件です。価格は2,550万円で、表面利回り11.2%です。<br>実勢価格（実際の取引相場）の約62.1%の価格となっています。<br>現況は賃貸中です。<br>接道は北側3.0m公道に8.8m接道/南西側5.8m公道に17.3m接道。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「岩国」（山口県　岩国市錦見１丁目９９７番３１、単価71,700円/㎡、対象地から約0.893km）の公示価格を土地面積515.80㎡に乗じ、÷0.9で実勢価格へ割り戻すと約4,109万円。価格2,550万円は実勢価格の約62.1%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/46267889qb.jpg" alt="">
+<div class="cbody">
+<div class="cname">東富田コーポ <span class="badge keep">継続</span></div>
+<div class="caddr">徳島県徳島市かちどき橋3丁目56／JR牟岐線 阿波富田駅 歩6分</div>
+<div class="cmeta">6,500万円／表面利回り 11.07%／RC造3階建 総戸数15戸／築年月 1981年7月／築45年／土地 816.85㎡／建物 816.00㎡</div>
+<div class="ccomment">一棟マンション・RC造3階建 総戸数15戸の物件です。価格は6,500万円で、表面利回り11.07%です。<br>実勢価格（実際の取引相場）の約62.8%の価格となっています。<br>現況は賃貸中です。<br>接道は北側公道3.97m～4.75m / 東側公道3.1m～3.2m。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「徳島」（徳島県　徳島市富田橋１丁目７０番１外、単価114,000円/㎡、対象地から約0.382km）の公示価格を土地面積816.85㎡に乗じ、÷0.9で実勢価格へ割り戻すと約10,347万円。価格6,500万円は実勢価格の約62.8%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4631819mvc.jpg" alt="">
+<div class="cbody">
+<div class="cname">メゾン・ドゥ・コリーヌＡ、Ｂ <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県岡山市中区海吉2226-1／JR赤穂線 大多羅駅 バス6分 歩15分</div>
+<div class="cmeta">6,900万円／表面利回り 13.76%／S造2階建 総戸数16戸／築年月 1996年9月／築30年／土地 1,790.02㎡／建物 746.96㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数16戸の物件です。価格は6,900万円で、表面利回り13.76%です。<br>実勢価格（実際の取引相場）の約63.2%の価格となっています。<br>現況は賃貸中です。<br>接道は一方 北5.0m公道 接道接面6.0m。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「岡山中」（岡山県　岡山市中区福泊字東二反地１１番２２、単価54,900円/㎡、対象地から約0.334km）の公示価格を土地面積1,790.02㎡に乗じ、÷0.9で実勢価格へ割り戻すと約10,919万円。価格6,900万円は実勢価格の約63.2%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/455615537h.jpg" alt="">
+<div class="cbody">
+<div class="cname">ダン・デ・リオン1、2、3 <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県岡山市北区万成西町9-5-2／JR吉備線 備前三門駅 歩20分</div>
+<div class="cmeta">10,000万円／表面利回り 10.59%／RC造2階建 総戸数10戸／築年月 1998年3月／築28年／土地 1,274.98㎡／建物 240.84㎡</div>
+<div class="ccomment">一棟マンション・RC造2階建 総戸数10戸の物件です。価格は10,000万円で、表面利回り10.59%です。<br>実勢価格（実際の取引相場）の約63.6%の価格となっています。<br>現況は賃貸中です。<br>接道は北西側間口7.5m／幅員4.5m、東側間口32.5m／幅員4m。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「岡山北」（岡山県　岡山市北区西崎１丁目３番１０１、単価111,000円/㎡、対象地から約1.655km）の公示価格を土地面積1,274.98㎡に乗じ、÷0.9で実勢価格へ割り戻すと約15,725万円。価格10,000万円は実勢価格の約63.6%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/47029655xl.jpg" alt="">
+<div class="cbody">
+<div class="cname">岡山県岡山市中区 一棟売りマンション <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県岡山市中区東山／岡山電気軌道東山本線 門田屋敷駅 歩13分</div>
+<div class="cmeta">5,500万円／表面利回り 11.8%／RC造3階建 総戸数12戸／築年月 1991年1月／築35年／土地 617.93㎡／建物 514.41㎡</div>
+<div class="ccomment">一棟マンション・RC造3階建 総戸数12戸の物件です。価格は5,500万円で、表面利回り11.8%です。<br>実勢価格（実際の取引相場）の約65.1%の価格となっています。<br>現況は賃貸中です。<br>接道は公道 西側幅員4.00m。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「岡山中」（岡山県　岡山市中区門田屋敷３丁目５番１４３、単価123,000円/㎡、対象地から約0.523km）の公示価格を土地面積617.93㎡に乗じ、÷0.9で実勢価格へ割り戻すと約8,445万円。価格5,500万円は実勢価格の約65.1%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/46999213aq.jpg" alt="">
+<div class="cbody">
+<div class="cname">愛媛県今治市 一棟アパート <span class="badge keep">継続</span></div>
+<div class="caddr">愛媛県今治市東村／JR予讃線 伊予富田駅 歩31分</div>
+<div class="cmeta">1,300万円／表面利回り 20.95%／S造2階建 総戸数6戸／築年月 1985年9月／築41年／土地 462.80㎡／建物 232.52㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数6戸の物件です。価格は1,300万円で、表面利回り20.95%です。<br>実勢価格（実際の取引相場）の約65.3%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「今治」（愛媛県　今治市東村４丁目甲４１３番６外、単価38,700円/㎡、対象地から約0.674km）の公示価格を土地面積462.80㎡に乗じ、÷0.9で実勢価格へ割り戻すと約1,990万円。価格1,300万円は実勢価格の約65.3%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4664825efa.jpg" alt="">
+<div class="cbody">
+<div class="cname">愛媛県松山市 一棟売りアパート <span class="badge keep">継続</span></div>
+<div class="caddr">愛媛県松山市高砂町1丁目／伊予鉄道環状線(JR松山駅経由) 清水町駅 歩3分</div>
+<div class="cmeta">2,300万円／表面利回り 14.11%／SRC造3階建 総戸数15戸／築年月 1979年4月／築47年／土地 186.04㎡／建物 395.82㎡</div>
+<div class="ccomment">一棟アパート・SRC造3階建 総戸数15戸の物件です。価格は2,300万円で、表面利回り14.11%です。<br>実勢価格（実際の取引相場）の約65.5%の価格となっています。<br>現況は賃貸中です。<br>接道は南側 市道 幅員6m。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「松山」（愛媛県　松山市緑町２丁目８番３１、単価170,000円/㎡、対象地から約0.772km）の公示価格を土地面積186.04㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,514万円。価格2,300万円は実勢価格の約65.5%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/_nophoto.jpg" alt="">
+<div class="cbody">
+<div class="cname">レトロプラス宮脇町 <span class="badge keep">継続</span></div>
+<div class="caddr">香川県高松市宮脇町二丁目／JR高徳線 昭和町駅 歩11分</div>
+<div class="cmeta">2,100万円／表面利回り 20.02%／ブロック造4階建 総戸数7戸／築年月 1972年12月／築53年／土地 247.83㎡／建物 294.48㎡</div>
+<div class="ccomment">一棟アパート・ブロック造4階建 総戸数7戸の物件です。価格は2,100万円で、表面利回り20.02%です。<br>実勢価格（実際の取引相場）の約68.7%の価格となっています。<br>現況は賃貸中です。<br>接道は南側2.5m私道。幅員・道路種別によっては再建築に制約がある可能性があるため、再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「高松」（香川県　高松市宮脇町２丁目９４８番１０、単価111,000円/㎡、対象地から約0.187km）の公示価格を土地面積247.83㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,057万円。価格2,100万円は実勢価格の約68.7%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4722132hlo.jpg" alt="">
+<div class="cbody">
+<div class="cname">高畑ビル <span class="badge new">NEW</span></div>
+<div class="caddr">広島県広島市南区丹那町／バス 丹那町停留所 徒歩3分</div>
+<div class="cmeta">2,600万円／表面利回り 20.35%／S造4階建 総戸数11戸／築年月 1973年4月／築53年／土地 201.65㎡／建物 381.67㎡</div>
+<div class="ccomment">一棟マンション・S造4階建 総戸数11戸の物件です。価格は2,600万円で、表面利回り20.35%です。<br>実勢価格（実際の取引相場）の約69.5%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「広島南」（広島県　広島市南区丹那町１１番８、単価167,000円/㎡、対象地から約0.165km）の公示価格を土地面積201.65㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,742万円。価格2,600万円は実勢価格の約69.5%です。<br>外観写真では、上層階に足場と養生シートがかかり外壁等の工事が行われている様子がうかがえます。ベランダには生活用品が見られ、入居が進んでいる様子です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/_nophoto.jpg" alt="">
+<div class="cbody">
+<div class="cname">徳島県徳島市 一棟売りマンション <span class="badge keep">継続</span></div>
+<div class="caddr">徳島県徳島市中島田4丁目／JR徳島線 鮎喰駅 歩14分</div>
+<div class="cmeta">2,600万円／表面利回り 22.27%／RC造3階建 総戸数12戸／築年月 1975年11月／築50年／土地 640.30㎡／建物 542.16㎡</div>
+<div class="ccomment">一棟マンション・RC造3階建 総戸数12戸の物件です。価格は2,600万円で、表面利回り22.27%です。<br>実勢価格（実際の取引相場）の約69.6%の価格となっています。<br>現況は賃貸中です。<br>接道は北側 公道 / 東側 公道。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「徳島」（徳島県　徳島市中島田町３丁目３９番３、単価52,500円/㎡、対象地から約0.558km）の公示価格を土地面積640.30㎡に乗じ、÷0.9で実勢価格へ割り戻すと約3,735万円。価格2,600万円は実勢価格の約69.6%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4693196lr9.jpg" alt="">
+<div class="cbody">
+<div class="cname">シャトー津島 <span class="badge keep">継続</span></div>
+<div class="caddr">岡山県岡山市北区津島西坂二丁目3-51／JR吉備線 備前三門駅 歩15分</div>
+<div class="cmeta">7,500万円／表面利回り 12.29%／S造2階建 総戸数18戸／築年月 1987年2月／築39年／土地 547.01㎡／建物 344.16㎡</div>
+<div class="ccomment">一棟アパート・S造2階建 総戸数18戸の物件です。価格は7,500万円で、表面利回り12.29%です。<br>実勢価格（実際の取引相場）の約70.9%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「岡山北」（岡山県　岡山市北区津島本町１３３２番７、単価174,000円/㎡、対象地から約0.304km）の公示価格を土地面積547.01㎡に乗じ、÷0.9で実勢価格へ割り戻すと約10,576万円。価格7,500万円は実勢価格の約70.9%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4621417u6r.jpg" alt="">
+<div class="cbody">
+<div class="cname">愛媛県松山市 一棟 <span class="badge keep">継続</span></div>
+<div class="caddr">愛媛県松山市保免中2丁目5／JR予讃線 市坪駅 歩17分</div>
+<div class="cmeta">4,600万円／表面利回り 13.35%／RC造3階建 総戸数10戸 （うち住戸以外 8戸）／築年月 1966年1月／築60年／土地 621.43㎡／建物 567.06㎡</div>
+<div class="ccomment">一棟マンション・RC造3階建 総戸数10戸 （うち住戸以外 8戸）の物件です。価格は4,600万円で、表面利回り13.35%です。<br>実勢価格（実際の取引相場）の約71.2%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「松山」（愛媛県　松山市土居田町４５０番７、単価93,600円/㎡、対象地から約0.644km）の公示価格を土地面積621.43㎡に乗じ、÷0.9で実勢価格へ割り戻すと約6,463万円。価格4,600万円は実勢価格の約71.2%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/45708098y6.jpg" alt="">
+<div class="cbody">
+<div class="cname">マツダビル <span class="badge keep">継続</span></div>
+<div class="caddr">広島県広島市南区向洋本町19-31／JR山陽本線 向洋駅 バス5分 歩2分</div>
+<div class="cmeta">5,000万円／表面利回り 15.14%／RC造4階建 総戸数16戸／築年月 1972年11月／築53年／土地 381.28㎡／建物 604.60㎡</div>
+<div class="ccomment">一棟マンション・RC造4階建 総戸数16戸の物件です。価格は5,000万円で、表面利回り15.14%です。<br>実勢価格（実際の取引相場）の約74.2%の価格となっています。<br>現況は賃貸中です。<br>接道状況は要確認です。<br>算出根拠：近傍の住宅地標準地「広島南」（広島県　広島市南区向洋中町１０２７番９１、単価159,000円/㎡、対象地から約0.257km）の公示価格を土地面積381.28㎡に乗じ、÷0.9で実勢価格へ割り戻すと約6,736万円。価格5,000万円は実勢価格の約74.2%です。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4594798h6f.jpg" alt="">
+<div class="cbody">
+<div class="cname">【グレース古江】 広島市西区古江東町 一棟マンション <span class="badge keep">継続</span></div>
+<div class="caddr">広島県広島市西区古江東町／広島電鉄宮島線 高須駅 歩6分</div>
+<div class="cmeta">10,300万円／表面利回り 6.61%／RC造4階建 総戸数8戸／築年月 1988年9月／築38年／土地 459.40㎡／建物 459.10㎡</div>
+<div class="ccomment">一棟マンション・RC造4階建 総戸数8戸の物件です。価格は10,300万円で、表面利回り6.61%です。<br>実勢価格（実際の取引相場）の約74.7%の価格となっています。<br>現況は賃貸中です。<br>接道は北4.0m公道。詳細な再建築の可否は要確認です。<br>算出根拠：近傍の住宅地標準地「広島西」（広島県　広島市西区高須１丁目２３５番１３外、単価270,000円/㎡、対象地から約0.522km）の公示価格を土地面積459.40㎡に乗じ、÷0.9で実勢価格へ割り戻すと約13,782万円。価格10,300万円は実勢価格の約74.7%です。</div>
+</div>
+</div>
+<div class="pagebreak"></div>
+<h2>3. 惜しい物件　3件</h2>
+<p style="font-size:8.4pt;color:#6b7280;margin:0 0 2mm;">枠Aの条件にほぼ合致しながら、いずれか1点の条件のみが外れたため掲載を見送った物件です。</p>
+<table class="listtable">
+<colgroup>
+<col style="width:11%"><col style="width:21%"><col style="width:8%"><col style="width:7%">
+<col style="width:9%"><col style="width:14%"><col style="width:6%"><col style="width:8%"><col style="width:8%"><col style="width:14%">
+</colgroup>
+<thead><tr>
+<th class="photocol">写真</th><th>物件名/所在地</th><th class="num">価格</th><th class="num">利回り</th><th class="num">築年月</th><th>構造</th><th class="num">戸数</th><th class="num">土地面積</th><th class="num">積算概算</th><th class="offcol">外れた条件</th>
+</tr></thead><tbody><tr>
+<td class="photocol"><img src="photos/4667259wga.jpg" alt=""></td>
+<td>カレッジ三共パート1・2（二棟一括）<br><span style="color:#6b7280;font-size:6.8pt;">香川県さぬき市志度1843-1</span></td>
+<td class="num">7,880万円</td>
+<td class="num">17.81%</td>
+<td class="num">1992年6月／築築34年</td>
+<td class="structcol">RC造3階建 総戸数54戸</td>
+<td class="num">54戸</td>
+<td class="num">2,359.94㎡</td>
+<td class="num">約12,626万円</td>
+<td class="offcol">築年数 築34年<br>（33年超）</td>
+</tr><tr>
+<td class="photocol"><img src="photos/4560277af6.jpg" alt=""></td>
+<td>香川県一棟マンション<br><span style="color:#6b7280;font-size:6.8pt;">香川県仲多度郡多度津町京町</span></td>
+<td class="num">6,800万円</td>
+<td class="num">13.59%</td>
+<td class="num">1992年5月／築築34年</td>
+<td class="structcol">RC造4階建 総戸数14戸</td>
+<td class="num">14戸</td>
+<td class="num">796.98㎡</td>
+<td class="num">約7,376万円</td>
+<td class="offcol">築年数 築34年<br>（33年超）</td>
+</tr><tr>
+<td class="photocol"><img src="photos/4698747qia.jpg" alt=""></td>
+<td>広島市安佐北区可部東2丁目 一棟マンション<br><span style="color:#6b7280;font-size:6.8pt;">広島県広島市安佐北区可部東2丁目</span></td>
+<td class="num">6,200万円</td>
+<td class="num">11.01%</td>
+<td class="num">1991年4月／築築35年</td>
+<td class="structcol">RC造4階建 総戸数19戸</td>
+<td class="num">19戸</td>
+<td class="num">191.14㎡</td>
+<td class="num">約3,279万円</td>
+<td class="offcol">築年数 築35年<br>（33年超）</td>
+</tr></tbody></table>
+<div class="card">
+<img class="photo" src="photos/4667259wga.jpg" alt="">
+<div class="cbody">
+<div class="cname">カレッジ三共パート1・2（二棟一括）</div>
+<div class="caddr">香川県さぬき市志度1843-1／JR高徳線 志度駅 徒歩22分</div>
+<div class="cmeta">7,880万円／表面利回り 17.81%／RC造3階建 総戸数54戸／築年月 1992年6月／築築34年／土地 2,359.94㎡／建物 1,314.00㎡</div>
+<div class="cmeta">積算概算 約12,626万円（積算比率 160%）</div>
+<div class="ccomment">枠Aの条件のうち、築年数 築34年（33年超）の点で対象外となりました。それ以外の条件は枠Aの基準を満たしており、参考物件としてご確認ください。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4560277af6.jpg" alt="">
+<div class="cbody">
+<div class="cname">香川県一棟マンション</div>
+<div class="caddr">香川県仲多度郡多度津町京町／JR予讃線 多度津駅 徒歩9分</div>
+<div class="cmeta">6,800万円／表面利回り 13.59%／RC造4階建 総戸数14戸／築年月 1992年5月／築築34年／土地 796.98㎡／建物 993.33㎡</div>
+<div class="cmeta">積算概算 約7,376万円（積算比率 108%）</div>
+<div class="ccomment">枠Aの条件のうち、築年数 築34年（33年超）の点で対象外となりました。それ以外の条件は枠Aの基準を満たしており、参考物件としてご確認ください。</div>
+</div>
+</div><div class="card">
+<img class="photo" src="photos/4698747qia.jpg" alt="">
+<div class="cbody">
+<div class="cname">広島市安佐北区可部東2丁目 一棟マンション</div>
+<div class="caddr">広島県広島市安佐北区可部東2丁目／JR可部線 可部駅 徒歩12分 / JR可部線 中島駅 徒歩14分</div>
+<div class="cmeta">6,200万円／表面利回り 11.01%／RC造4階建 総戸数19戸／築年月 1991年4月／築築35年／土地 191.14㎡／建物 374.82㎡</div>
+<div class="cmeta">積算概算 約3,279万円（積算比率 53%）</div>
+<div class="ccomment">枠Aの条件のうち、築年数 築35年（33年超）の点で対象外となりました。それ以外の条件は枠Aの基準を満たしており、参考物件としてご確認ください。</div>
+</div>
+</div>
+<div class="pagebreak"></div>
+<h2>4. ご提案</h2>
+<h3>4-1. 優先順位</h3>
+<ol class="prio"><li><b>インペリアルミトA・B棟（山口県長門市）</b> — 積算比率約90%、利回り12.37%と枠Aの中でも価格・利回りのバランスが良好。まずはここから検討を進めることを推奨します。</li><li><b>マリンコート吉見（山口県下関市）</b> — 築22年と枠A対象の中では最も築浅で、今後の耐用年数・出口を見込みやすい物件です。</li><li><b>徳島サンハイツ（徳島県小松島市）</b> — 実勢価格比約31.3%と枠Bの中でも突出した価格優位性があり、大規模なため出口の選択肢も複数想定できます。</li><li><b>岡山県倉敷市 一棟RCマンション 4棟一括</b> — 価格577万円に対し実勢価格比約16.7%と、枠B全体で最も割安な水準です。ただし劣化が見られるため、改修コストの精査が前提になります。</li><li><b>高畑ビル（広島県広島市南区）</b> — 本日新規に条件合致。利回り20.35%、実勢価格比約69.5%と好条件で、外壁の工事跡が見られるため管理状況の確認を優先してください。</li><li><b>デュウオコート西平塚（広島県広島市中区）</b> — 価格11,000万円と規模が大きい分、実勢価格比約42.5%の優位性を活かせば投資効率の高い案件になり得ます。</li></ol>
+<h3>4-2. 物件ごとの具体アクション</h3>
+<div class="actionblock">
+<h3>インペリアルミトA・B棟（山口県長門市東深川）</h3>
+<dl>
+<dt>確認事項</dt><dd>価格差異の解消と、A・B2棟の権利関係・管理区分の確認</dd>
+<dt>交渉ライン</dt><dd>積算比率約90%を踏まえ、価格4,300万円を基準に指値の余地を探る</dd>
+<dt>判断基準</dt><dd>利回り12.37%を維持できる賃料水準か、現況の稼働率とあわせて確認</dd>
+<dt>リスク／妙味</dt><dd>地方物件のため、出口時の流動性の低さと客付け動線の確認が必要</dd>
+</dl>
+</div><div class="actionblock">
+<h3>マリンコート吉見（山口県下関市吉見新町）</h3>
+<dl>
+<dt>確認事項</dt><dd>接道が複数方向にまたがるため、正確な建築計画概要書での確認</dd>
+<dt>交渉ライン</dt><dd>積算比率約95%であり、価格交渉よりも早期の意思決定を優先</dd>
+<dt>判断基準</dt><dd>築22年で耐用年数に余裕があり、長期保有前提でも判断しやすい水準</dd>
+<dt>リスク／妙味</dt><dd>接道幅員の記載が概算のため、再建築の可否は現地・役所調査で確定させる</dd>
+</dl>
+</div><div class="actionblock">
+<h3>徳島サンハイツ（徳島県小松島市中郷町）</h3>
+<dl>
+<dt>確認事項</dt><dd>総戸数300戸の大規模物件のため、管理体制・修繕履歴・長期修繕計画の確認が必須</dd>
+<dt>交渉ライン</dt><dd>実勢価格比約31.3%という価格優位性を踏まえても、大規模修繕費の見立てが判断の鍵</dd>
+<dt>判断基準</dt><dd>現況の稼働率・賃料水準の実態を精査した上で判断</dd>
+<dt>リスク／妙味</dt><dd>規模が大きく融資期間・自己資金の設計を先に固める必要あり</dd>
+</dl>
+</div><div class="actionblock">
+<h3>岡山県倉敷市 一棟RCマンション 4棟一括（児島唐琴）</h3>
+<dl>
+<dt>確認事項</dt><dd>外観写真で確認できる劣化（壁面の汚れ・雨だれ・開口部まわりの傷み）の詳細確認</dd>
+<dt>交渉ライン</dt><dd>価格577万円は交渉余地よりも早期の現地確認を優先すべき水準</dd>
+<dt>判断基準</dt><dd>4棟一括のため、各棟の稼働状況・賃料を個別に確認</dd>
+<dt>リスク／妙味</dt><dd>築55年のため、法定耐用年数超過後の融資条件を金融機関に確認</dd>
+</dl>
+</div><div class="actionblock">
+<h3>高畑ビル（広島県広島市南区丹那町）</h3>
+<dl>
+<dt>確認事項</dt><dd>外観写真に見える足場・養生シートの工事内容（外壁改修か雨漏り対応か）の確認</dd>
+<dt>交渉ライン</dt><dd>実勢価格比約69.5%を踏まえた価格交渉の余地を確認</dd>
+<dt>判断基準</dt><dd>接道状況の記載がないため、再建築の可否を役所調査で確認</dd>
+<dt>リスク／妙味</dt><dd>築53年のため融資期間の制約を前提に資金計画を検討</dd>
+</dl>
+</div><div class="actionblock">
+<h3>デュウオコート西平塚（広島県広島市中区西平塚町）</h3>
+<dl>
+<dt>確認事項</dt><dd>総戸数17戸のうち住戸以外1戸の用途（店舗等）の詳細確認</dd>
+<dt>交渉ライン</dt><dd>実勢価格比約42.5%を踏まえた価格交渉の余地を確認</dd>
+<dt>判断基準</dt><dd>表面利回り8.1%とやや低めのため、現況家賃の妥当性を確認</dd>
+<dt>リスク／妙味</dt><dd>都心部のため流動性は高いが、価格規模に応じた自己資金の準備が前提</dd>
+</dl>
+</div>
+<h3>4-3. 全体メモ（融資・出口）</h3>
+<div class="note">
+<b>融資</b>：枠Aの5件はいずれもRC造・SRC造で法定耐用年数に余裕があり、金融機関の評価も得やすい水準です。枠Bは築古物件が中心のため、耐用年数超過後の融資（期間短縮・金利上乗せ）を前提に資金計画を組む必要があります。<br>
+<b>出口</b>：枠Aは価格帯が4,000万〜8,000万円で次の買い手を見込みやすい一方、枠Bは規模・築年数が幅広いため、保有期間中の賃料収入を主軸に、売却は市況を見ながら判断する前提で検討するのが妥当です。
+</div>
+<div class="pagebreak"></div>
+<h2>5. 積算の前提（概算・要注意）</h2>
+<div class="note">
+積算（枠A）＝ 土地（国土数値情報 標準地価格×土地面積）＋ 建物（延床面積×20万円/㎡×(47−築年数)÷47）で概算したものです。<br>
+土地分は、物件住所を国土地理院ジオコーダで緯度経度に変換し、最寄りの住宅地標準地（国土数値情報 L01・中国四国9県）の公示価格単価を採用しています。標準地までの距離が2.0kmを超える場合は「算定不可（倍率地域）」としています。<br>
+枠Bの実勢価格は、同じ標準地の公示価格に土地面積を乗じたうえで÷0.9（公示価格は実勢価格のおおむね9割とされるための割り戻し）で算出した概算値です。建物分は含みません。<br>
+いずれも簡易な概算であり、実際の鑑定評価・査定額とは異なります。用途地域・接道状況・個別要因により実際の評価は変動しますので、最終判断の際は個別に査定・鑑定をご利用ください。
+</div>
+
+</body>
+</html>
